@@ -1,3 +1,3 @@
-## Modified from the open-source project vite
+# Modified from the open-source project vite
 
-# check it → [vite](https://github.com/vitejs/vite)
+## This project is based on the vite open-source project. Click on [vite](https://github.com/vitejs/vite) to go.
