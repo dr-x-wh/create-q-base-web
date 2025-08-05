@@ -4,7 +4,7 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig(({mode}) => {
-    const {VITE_APP_BASE_API, VITE_APP_PROXY_TARGET} = loadEnv(mode, process.cwd(), '')
+    const {VITE_APP_PROXY_TARGET} = loadEnv(mode, process.cwd(), '')
     return {
         plugins: [vue()],
         resolve: {
@@ -39,7 +39,7 @@ export default defineConfig(({mode}) => {
         },
         server: {
             proxy: {
-                [VITE_APP_BASE_API]: {
+                '/api': {
                     target: VITE_APP_PROXY_TARGET,
                     changeOrigin: true,
                     ws: true,
