@@ -13,3 +13,4 @@ node_modules
 playground-temp
 temp
 .eslintcache
+pnpm-lock.yaml
