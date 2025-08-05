@@ -356,7 +356,6 @@ async function init() {
   const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent)
   const cancel = () => prompts.cancel('Operation cancelled')
 
-  // 1. Get project name and target dir
   let targetDir = argTargetDir
   if (!targetDir) {
     const projectName = await prompts.text({
@@ -373,7 +372,6 @@ async function init() {
     targetDir = formatTargetDir(projectName)
   }
 
-  // 2. Handle directory if exist and not empty
   if (fs.existsSync(targetDir) && !isEmpty(targetDir)) {
     const overwrite = argOverwrite
       ? 'yes'
@@ -409,7 +407,6 @@ async function init() {
     }
   }
 
-  // 3. Get package name
   let packageName = path.basename(path.resolve(targetDir))
   if (!isValidPackageName(packageName)) {
     const packageNameResult = await prompts.text({
@@ -426,7 +423,6 @@ async function init() {
     packageName = packageNameResult
   }
 
-  // 4. Choose a framework and variant
   let template = argTemplate
   let hasInvalidArgTemplate = false
   if (argTemplate && !TEMPLATES.includes(argTemplate)) {
@@ -473,7 +469,6 @@ async function init() {
   const root = path.join(cwd, targetDir)
   fs.mkdirSync(root, { recursive: true })
 
-  // determine template
   let isReactSwc = false
   if (template.includes('-swc')) {
     isReactSwc = true
@@ -489,7 +484,6 @@ async function init() {
     const fullCustomCommand = getFullCustomCommand(customCommand, pkgInfo)
 
     const [command, ...args] = fullCustomCommand.split(' ')
-    // we replace TARGET_DIR here because targetDir may include a space
     const replacedArgs = args.map((arg) =>
       arg.replace('TARGET_DIR', () => targetDir),
     )
@@ -624,7 +618,6 @@ function pkgFromUserAgent(userAgent: string | undefined): PkgInfo | undefined {
 }
 
 function setupReactSwc(root: string, isTs: boolean) {
-  // renovate: datasource=npm depName=@vitejs/plugin-react-swc
   const reactSwcPluginVersion = '3.11.0'
 
   editFile(path.resolve(root, 'package.json'), (content) => {
@@ -653,24 +646,18 @@ function getFullCustomCommand(customCommand: string, pkgInfo?: PkgInfo) {
   return (
     customCommand
       .replace(/^npm create (?:-- )?/, () => {
-        // `bun create` uses it's own set of templates,
-        // the closest alternative is using `bun x` directly on the package
         if (pkgManager === 'bun') {
           return 'bun x create-'
         }
-        // pnpm doesn't support the -- syntax
         if (pkgManager === 'pnpm') {
           return 'pnpm create '
         }
-        // For other package managers, preserve the original format
         return customCommand.startsWith('npm create -- ')
           ? `${pkgManager} create -- `
           : `${pkgManager} create `
       })
-      // Only Yarn 1.x doesn't support `@version` in the `create` command
       .replace('@latest', () => (isYarn1 ? '' : '@latest'))
       .replace(/^npm exec/, () => {
-        // Prefer `pnpm dlx`, `yarn dlx`, or `bun x`
         if (pkgManager === 'pnpm') {
           return 'pnpm dlx'
         }
@@ -680,8 +667,6 @@ function getFullCustomCommand(customCommand: string, pkgInfo?: PkgInfo) {
         if (pkgManager === 'bun') {
           return 'bun x'
         }
-        // Use `npm exec` in all other cases,
-        // including Yarn 1.x and other custom npm clients.
         return 'npm exec'
       })
   )
