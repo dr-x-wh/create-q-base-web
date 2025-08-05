@@ -91,6 +91,7 @@ const TEMPLATES = FRAMEWORKS.map((f) => f.variants.map((v) => v.name)).reduce(
 
 const renameFiles: Record<string, string | undefined> = {
   _gitignore: '.gitignore',
+  _env: '.env',
 }
 
 const defaultTargetDir = 'q-base-web'
