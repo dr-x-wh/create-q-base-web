@@ -31,24 +31,17 @@ const argv = mri<{
 const cwd = process.cwd()
 
 const helpMessage = `\
-Usage: create-vite [OPTION]... [DIRECTORY]
+用法: create-q-base-web [OPTION]... [DIRECTORY]
 
-Create a new Vite project in JavaScript or TypeScript.
-With no arguments, start the CLI in interactive mode.
+用JavaScript或TypeScript创建一个新的q-base-web项目。
+不带参数，以交互模式启动脚手架。
 
-Options:
-  -t, --template NAME        use a specific template
+选项:
+  -t, --template NAME    使用指定的模板
 
-Available templates:
-${yellow    ('vanilla-ts     vanilla'  )}
-${green     ('vue-ts         vue'      )}
-${cyan      ('react-ts       react'    )}
-${cyan      ('react-swc-ts   react-swc')}
-${magenta   ('preact-ts      preact'   )}
-${redBright ('lit-ts         lit'      )}
-${red       ('svelte-ts      svelte'   )}
-${blue      ('solid-ts       solid'    )}
-${blueBright('qwik-ts        qwik'     )}`
+可用的模板:
+${green('vue')}    ${red('react-ts(dev)')}
+`
 
 type ColorFunc = (str: string | number) => string
 type Framework = {
@@ -66,263 +59,26 @@ type FrameworkVariant = {
 
 const FRAMEWORKS: Framework[] = [
   {
-    name: 'vanilla',
-    display: 'Vanilla',
-    color: yellow,
-    variants: [
-      {
-        name: 'vanilla-ts',
-        display: 'TypeScript',
-        color: blue,
-      },
-      {
-        name: 'vanilla',
-        display: 'JavaScript',
-        color: yellow,
-      },
-    ],
-  },
-  {
     name: 'vue',
     display: 'Vue',
     color: green,
     variants: [
       {
-        name: 'vue-ts',
-        display: 'TypeScript',
-        color: blue,
-      },
-      {
         name: 'vue',
         display: 'JavaScript',
-        color: yellow,
-      },
-      {
-        name: 'custom-create-vue',
-        display: 'Official Vue Starter ↗',
         color: green,
-        customCommand: 'npm create vue@latest TARGET_DIR',
-      },
-      {
-        name: 'custom-nuxt',
-        display: 'Nuxt ↗',
-        color: greenBright,
-        customCommand: 'npm exec nuxi init TARGET_DIR',
       },
     ],
   },
   {
     name: 'react',
     display: 'React',
-    color: cyan,
+    color: red,
     variants: [
       {
         name: 'react-ts',
         display: 'TypeScript',
-        color: blue,
-      },
-      {
-        name: 'react-swc-ts',
-        display: 'TypeScript + SWC',
-        color: blue,
-      },
-      {
-        name: 'react',
-        display: 'JavaScript',
-        color: yellow,
-      },
-      {
-        name: 'react-swc',
-        display: 'JavaScript + SWC',
-        color: yellow,
-      },
-      {
-        name: 'custom-react-router',
-        display: 'React Router v7 ↗',
-        color: cyan,
-        customCommand: 'npm create react-router@latest TARGET_DIR',
-      },
-      {
-        name: 'custom-tanstack-router',
-        display: 'TanStack Router ↗',
-        color: cyan,
-        customCommand:
-          'npm create -- tsrouter-app@latest TARGET_DIR --framework React --interactive',
-      },
-      {
-        name: 'redwoodsdk-standard',
-        display: 'RedwoodSDK ↗',
         color: red,
-        customCommand:
-          'npm exec degit redwoodjs/sdk/starters/standard TARGET_DIR',
-      },
-      {
-        name: 'rsc',
-        display: 'RSC ↗',
-        color: magenta,
-        customCommand:
-          'npm exec degit vitejs/vite-plugin-react/packages/plugin-rsc/examples/starter TARGET_DIR',
-      },
-    ],
-  },
-  {
-    name: 'preact',
-    display: 'Preact',
-    color: magenta,
-    variants: [
-      {
-        name: 'preact-ts',
-        display: 'TypeScript',
-        color: blue,
-      },
-      {
-        name: 'preact',
-        display: 'JavaScript',
-        color: yellow,
-      },
-      {
-        name: 'custom-create-preact',
-        display: 'Official Preact Starter ↗',
-        color: magenta,
-        customCommand: 'npm create preact@latest TARGET_DIR',
-      },
-    ],
-  },
-  {
-    name: 'lit',
-    display: 'Lit',
-    color: redBright,
-    variants: [
-      {
-        name: 'lit-ts',
-        display: 'TypeScript',
-        color: blue,
-      },
-      {
-        name: 'lit',
-        display: 'JavaScript',
-        color: yellow,
-      },
-    ],
-  },
-  {
-    name: 'svelte',
-    display: 'Svelte',
-    color: red,
-    variants: [
-      {
-        name: 'svelte-ts',
-        display: 'TypeScript',
-        color: blue,
-      },
-      {
-        name: 'svelte',
-        display: 'JavaScript',
-        color: yellow,
-      },
-      {
-        name: 'custom-svelte-kit',
-        display: 'SvelteKit ↗',
-        color: red,
-        customCommand: 'npm exec sv create TARGET_DIR',
-      },
-    ],
-  },
-  {
-    name: 'solid',
-    display: 'Solid',
-    color: blue,
-    variants: [
-      {
-        name: 'solid-ts',
-        display: 'TypeScript',
-        color: blue,
-      },
-      {
-        name: 'solid',
-        display: 'JavaScript',
-        color: yellow,
-      },
-      {
-        name: 'custom-tanstack-router',
-        display: 'TanStack Router ↗',
-        color: cyan,
-        customCommand:
-          'npm create -- tsrouter-app@latest TARGET_DIR --framework Solid --interactive',
-      },
-    ],
-  },
-  {
-    name: 'qwik',
-    display: 'Qwik',
-    color: blueBright,
-    variants: [
-      {
-        name: 'qwik-ts',
-        display: 'TypeScript',
-        color: blueBright,
-      },
-      {
-        name: 'qwik',
-        display: 'JavaScript',
-        color: yellow,
-      },
-      {
-        name: 'custom-qwik-city',
-        display: 'QwikCity ↗',
-        color: blueBright,
-        customCommand: 'npm create qwik@latest basic TARGET_DIR',
-      },
-    ],
-  },
-  {
-    name: 'angular',
-    display: 'Angular',
-    color: red,
-    variants: [
-      {
-        name: 'custom-angular',
-        display: 'Angular ↗',
-        color: red,
-        customCommand: 'npm exec @angular/cli@latest new TARGET_DIR',
-      },
-      {
-        name: 'custom-analog',
-        display: 'Analog ↗',
-        color: yellow,
-        customCommand: 'npm create analog@latest TARGET_DIR',
-      },
-    ],
-  },
-  {
-    name: 'marko',
-    display: 'Marko',
-    color: magenta,
-    variants: [
-      {
-        name: 'marko-run',
-        display: 'Marko Run ↗',
-        color: magenta,
-        customCommand: 'npm create -- marko@latest --name TARGET_DIR',
-      },
-    ],
-  },
-  {
-    name: 'others',
-    display: 'Others',
-    color: reset,
-    variants: [
-      {
-        name: 'create-vite-extra',
-        display: 'Extra Vite Starters ↗',
-        color: reset,
-        customCommand: 'npm create vite-extra@latest TARGET_DIR',
-      },
-      {
-        name: 'create-electron-vite',
-        display: 'Electron ↗',
-        color: reset,
-        customCommand: 'npm create electron-vite@latest TARGET_DIR',
       },
     ],
   },
@@ -337,7 +93,7 @@ const renameFiles: Record<string, string | undefined> = {
   _gitignore: '.gitignore',
 }
 
-const defaultTargetDir = 'vite-project'
+const defaultTargetDir = 'q-base-web'
 
 async function init() {
   const argTargetDir = argv._[0]
