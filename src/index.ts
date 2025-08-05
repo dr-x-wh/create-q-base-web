@@ -30,7 +30,6 @@ const argv = mri<{
 })
 const cwd = process.cwd()
 
-// prettier-ignore
 const helpMessage = `\
 Usage: create-vite [OPTION]... [DIRECTORY]
 
