@@ -31,15 +31,15 @@ const argv = mri<{
 const cwd = process.cwd()
 
 const helpMessage = `\
-用法: create-q-base-web [OPTION]... [DIRECTORY]
+用法：create-q-base-web [OPTION]... [DIRECTORY]
 
 用JavaScript或TypeScript创建一个新的q-base-web项目。
 不带参数，以交互模式启动脚手架。
 
-选项:
+选项：
   -t, --template NAME    使用指定的模板
 
-可用的模板:
+可用的模板：
 ${green('vue')}    ${red('react-ts(dev)')}
 `
 
@@ -109,18 +109,18 @@ async function init() {
   }
 
   const pkgInfo = pkgFromUserAgent(process.env.npm_config_user_agent)
-  const cancel = () => prompts.cancel('Operation cancelled')
+  const cancel = () => prompts.cancel('取消操作')
 
   let targetDir = argTargetDir
   if (!targetDir) {
     const projectName = await prompts.text({
-      message: 'Project name:',
+      message: '项目名称：',
       defaultValue: defaultTargetDir,
       placeholder: defaultTargetDir,
       validate: (value) => {
         return value.length === 0 || formatTargetDir(value).length > 0
           ? undefined
-          : 'Invalid project name'
+          : '无效的项目名称'
       },
     })
     if (prompts.isCancel(projectName)) return cancel()
@@ -133,20 +133,20 @@ async function init() {
       : await prompts.select({
           message:
             (targetDir === '.'
-              ? 'Current directory'
-              : `Target directory "${targetDir}"`) +
-            ` is not empty. Please choose how to proceed:`,
+              ? '当前目录'
+              : `目标目录 "${targetDir}"`) +
+            ` 不是空的。请选择如何继续：`,
           options: [
             {
-              label: 'Cancel operation',
+              label: '取消操作',
               value: 'no',
             },
             {
-              label: 'Remove existing files and continue',
+              label: '删除现有文件并继续',
               value: 'yes',
             },
             {
-              label: 'Ignore files and continue',
+              label: '忽略文件并继续',
               value: 'ignore',
             },
           ],
@@ -165,12 +165,12 @@ async function init() {
   let packageName = path.basename(path.resolve(targetDir))
   if (!isValidPackageName(packageName)) {
     const packageNameResult = await prompts.text({
-      message: 'Package name:',
+      message: '包名：',
       defaultValue: toValidPackageName(packageName),
       placeholder: toValidPackageName(packageName),
       validate(dir) {
         if (!isValidPackageName(dir)) {
-          return 'Invalid package.json name'
+          return '无效的包名'
         }
       },
     })
@@ -187,8 +187,8 @@ async function init() {
   if (!template) {
     const framework = await prompts.select({
       message: hasInvalidArgTemplate
-        ? `"${argTemplate}" isn't a valid template. Please choose from below: `
-        : 'Select a framework:',
+        ? `"${argTemplate}" 不是一个有效的模板。请从下面选择：`
+        : '选择一个模板：',
       options: FRAMEWORKS.map((framework) => {
         const frameworkColor = framework.color
         return {
@@ -200,7 +200,7 @@ async function init() {
     if (prompts.isCancel(framework)) return cancel()
 
     const variant = await prompts.select({
-      message: 'Select a variant:',
+      message: '选择一个版本：',
       options: framework.variants.map((variant) => {
         const variantColor = variant.color
         const command = variant.customCommand
@@ -224,12 +224,6 @@ async function init() {
   const root = path.join(cwd, targetDir)
   fs.mkdirSync(root, { recursive: true })
 
-  let isReactSwc = false
-  if (template.includes('-swc')) {
-    isReactSwc = true
-    template = template.replace('-swc', '')
-  }
-
   const pkgManager = pkgInfo ? pkgInfo.name : 'npm'
 
   const { customCommand } =
@@ -248,7 +242,7 @@ async function init() {
     process.exit(status ?? 0)
   }
 
-  prompts.log.step(`Scaffolding project in ${root}...`)
+  prompts.log.step(`正在构建 ${root} ...`)
 
   const templateDir = path.resolve(
     fileURLToPath(import.meta.url),
@@ -278,13 +272,9 @@ async function init() {
 
   write('package.json', JSON.stringify(pkg, null, 2) + '\n')
 
-  if (isReactSwc) {
-    setupReactSwc(root, template.endsWith('-ts'))
-  }
-
   let doneMessage = ''
   const cdProjectName = path.relative(cwd, root)
-  doneMessage += `Done. Now run:\n`
+  doneMessage += `完成. 你可以：\n`
   if (root !== cwd) {
     doneMessage += `\n  cd ${
       cdProjectName.includes(' ') ? `"${cdProjectName}"` : cdProjectName
@@ -370,28 +360,6 @@ function pkgFromUserAgent(userAgent: string | undefined): PkgInfo | undefined {
     name: pkgSpecArr[0],
     version: pkgSpecArr[1],
   }
-}
-
-function setupReactSwc(root: string, isTs: boolean) {
-  const reactSwcPluginVersion = '3.11.0'
-
-  editFile(path.resolve(root, 'package.json'), (content) => {
-    return content.replace(
-      /"@vitejs\/plugin-react": ".+?"/,
-      `"@vitejs/plugin-react-swc": "^${reactSwcPluginVersion}"`,
-    )
-  })
-  editFile(
-    path.resolve(root, `vite.config.${isTs ? 'ts' : 'js'}`),
-    (content) => {
-      return content.replace('@vitejs/plugin-react', '@vitejs/plugin-react-swc')
-    },
-  )
-}
-
-function editFile(file: string, callback: (content: string) => string) {
-  const content = fs.readFileSync(file, 'utf-8')
-  fs.writeFileSync(file, callback(content), 'utf-8')
 }
 
 function getFullCustomCommand(customCommand: string, pkgInfo?: PkgInfo) {
