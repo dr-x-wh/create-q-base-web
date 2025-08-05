@@ -1,16 +1,16 @@
 {
-  "name": "create-vite",
-  "version": "7.0.3",
+  "name": "create-q-base-web",
+  "version": "1.0.0",
   "type": "module",
   "license": "MIT",
-  "author": "Evan You",
+  "author": "dr-x",
   "bin": {
-    "create-vite": "index.js",
+    "create-q-base-web": "index.js",
     "cva": "index.js"
   },
   "files": [
     "index.js",
-    "template-*",
+    "template",
     "dist"
   ],
   "scripts": {
@@ -24,14 +24,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vitejs/vite.git",
+    "url": "git+https://github.com/dr-x-wh/create-q-base-web.git",
     "directory": "packages/create-vite"
   },
   "bugs": {
-    "url": "https://github.com/vitejs/vite/issues"
+    "url": "https://github.com/dr-x-wh/create-q-base-web/issues"
   },
-  "homepage": "https://github.com/vitejs/vite/tree/main/packages/create-vite#readme",
-  "funding": "https://github.com/vitejs/vite?sponsor=1",
+  "homepage": "https://github.com/dr-x-wh/create-q-base-web",
+  "funding": "https://github.com/dr-x-wh/create-q-base-web",
   "devDependencies": {
     "@clack/prompts": "^0.11.0",
     "cross-spawn": "^7.0.6",
@@ -68,5 +68,6 @@
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.38.0",
     "vitest": "^3.2.4"
-  }
+  },
+  "packageManager": "pnpm@10.13.1"
 }
