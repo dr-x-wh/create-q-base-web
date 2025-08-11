@@ -10,7 +10,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import {createPinia} from "pinia"
 // project
 import App from '@/App.vue'
-import '@/style/main.css'
+import '@/assets/style/main.css'
 import router from '@/router/index.js'
 
 const app = createApp(App)
