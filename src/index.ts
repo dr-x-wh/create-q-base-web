@@ -7,16 +7,8 @@ import * as prompts from '@clack/prompts'
 import colors from 'picocolors'
 
 const {
-  blue,
-  blueBright,
-  cyan,
   green,
-  greenBright,
-  magenta,
   red,
-  redBright,
-  reset,
-  yellow,
 } = colors
 
 const argv = mri<{
