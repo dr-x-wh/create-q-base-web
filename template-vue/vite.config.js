@@ -5,6 +5,7 @@ import path from 'path'
 // https://vite.dev/config/
 export default defineConfig(({mode}) => {
     const {VITE_APP_PROXY_TARGET} = loadEnv(mode, process.cwd(), '')
+    const proxy_url = VITE_APP_PROXY_TARGET || 'http://localhost:9090'
     return {
         plugins: [vue()],
         resolve: {
@@ -40,7 +41,7 @@ export default defineConfig(({mode}) => {
         server: {
             proxy: {
                 '/api': {
-                    target: VITE_APP_PROXY_TARGET,
+                    target: proxy_url,
                     changeOrigin: true,
                     ws: true,
                     rewrite: (path) => path.replace(/^\/api/, ''),

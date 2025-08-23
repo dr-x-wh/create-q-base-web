@@ -1,3 +1,3 @@
 export default {
-    title: '首页', sort: 1,
+    title: '密钥管理', sort: 1,
 }

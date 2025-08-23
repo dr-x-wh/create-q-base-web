@@ -1,3 +1,3 @@
 export default {
-    layout: 'index',
+    layout: 'index',//
 }

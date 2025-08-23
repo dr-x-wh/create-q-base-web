@@ -52,7 +52,12 @@ const getRoutes = () => {
     })
     routes = routesFormat(routes)
     routes = clearPath(routes)
-    routes.push({path: '/:path(.*)*', name: 'error', component: () => import('@/views/error/index.vue'),},)
+    routes.push({
+        path: '/:path(.*)*',
+        name: 'error',
+        component: () => import('@/views/error/index.vue'),
+        meta: {online: false}
+    })
     return routes
 }
 
